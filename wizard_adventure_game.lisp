@@ -1,4 +1,8 @@
-(defparameter *nodes* '((living-room (you are in the living room. 
+(defpackage :rpg
+  (:use :common-lisp))
+(in-package :rpg)
+
+(defparameter *nodes* '((living-room (you are in the living room.
                                         a wizard is snoring loudly on the couch.))
                         (garden      (you are in a beutiful garden.
                                         there is a well in front of you.))
@@ -15,7 +19,7 @@
 (defparameter *object-locations* '((whiskey living-room)
                                    (bucket living-room)
                                    (frog garden)
-                                   (chain, garden)))
+                                   (chain garden)))
 
 (defparameter *location* 'living-room)
 
@@ -29,19 +33,19 @@
   (apply #'append (mapcar #'describe-path (cdr (assoc location edges)))))
 
 (defun objects-at (loc objs obj-locs)
-  (labels ((at-loc-p (obj) 
+  (labels ((at-loc-p (obj)
                      (eq (cadr (assoc obj obj-locs)) loc)))
     (remove-if-not #'at-loc-p objs)))
 
 (defun describe-objects (loc objs obj-loc)
   (labels ((describe-obj (obj)
                          `(you see a ,obj on the floor.)))
-    appy #'append (mapcar #'descrbe-obj (objects-at loc objs obj-loc))))
+      (apply #'append (mapcar #'describe-obj (objects-at loc objs obj-loc)))))
 
 (defun look ()
   (append (describe-location *location* *nodes*)
-          (desribe-paths *location* *edges*)
-          (describe-objects *location* *objects*)))
+          (describe-paths *location* *edges*)
+          (describe-objects *location* *objects* *object-locations*)))
 
 (defun walk (direction)
   (let ((next (find direction
@@ -61,4 +65,4 @@
            '(you cannot get that.))))
 
 (defun inventory ()
-  (cons 'items- (objects-at 'body *objects* *object-locations*)))
+  (cons 'items (objects-at 'body *objects* *object-locations*)))
