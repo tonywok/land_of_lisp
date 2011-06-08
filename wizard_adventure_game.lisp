@@ -61,7 +61,7 @@
                  (objects-at *location* *objects* *object-locations*))
          (push (list object 'body) *object-locations*)
            `(you are now carrying ,object))
-         (t 
+         (t
            '(you cannot get that.))))
 
 (defun inventory ()
