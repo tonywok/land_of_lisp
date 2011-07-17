@@ -1,2 +1,4 @@
 *.fas
 *.lib
+*.dot
+*.dot.png
