@@ -166,3 +166,48 @@
 (defun draw-known-city ()
   (ugraph->png "known-city" (known-city-nodes) (known-city-edges)))
 
+(defun walk (pos)
+  (handle-direction pos nil))
+
+(defun charge (pos)
+  (handle-direction pos t))
+
+(defun handle-direction (pos charging)
+  (let ((edge (assoc pos
+                     (cdr (assoc *player-pos* *congestion-city-edges*)))))
+    (if edge
+      (handle-new-place edge pos charging)
+      (princ "That location doesn't exist!"))))
+
+(defun handle-new-place (edge pos charging)
+  (let* ((node (assoc pos *congestion-city-nodes*))
+         (has-worm (and (member 'gow-worm node)
+                        (not (member pos *visited-nodes*)))))
+    (pushnew pos *visited-nodes*)
+    (setf *player-pos* pos)
+    (draw-known-city)
+    (cond ((member 'cops edge) (princ "You ran into the cops. Game Over."))
+          ((member 'wumpus node) (if charging
+                                   (princ "You found the wumpus!")
+                                   (princ "You ran into the wumpus")))
+          (charging (princ "You wasted your last bullet. Game over."))
+          (has-worm (let ((new-pos (random-node)))
+                      (princ "You ran into a Glow Worm Gang! You're now at ")
+                      (princ new-pos)
+                      (handle-new-place nil new-pos nil))))))
+
+
+
+
+
+; (defun foo (val)
+;   (let ((hash (make-hash-table)))
+;     (push val (gethash 3 hash))
+;     hash))
+; 
+; (reduce (lambda (best item)
+;          (if (and (evenp item) (> item best))
+;            item
+;            best))
+;   '(7 4 2 6 3)
+;   :initial-value 0)
